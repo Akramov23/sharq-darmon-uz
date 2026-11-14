@@ -313,7 +313,7 @@
       <div class="pdp">
         <div class="gallery">
           <div class="main" id="pdp-main">${img(p)}</div>
-          ${p.img ? `<div class="thumbs">${[0, 1, 2].map(i => `<button type="button" data-thumb="${i}" aria-current="${i === 0}" aria-label="Фото ${i + 1}"><img src="${src(p.img)}" alt="" style="${i === 1 ? 'transform:scaleX(-1)' : i === 2 ? 'transform:rotate(-8deg) scale(.9)' : ''}"></button>`).join('')}</div>` : ''}
+          ${p.img ? `<div class="thumbs">${[0, 1, 2].map(i => `<button type="button" data-thumb="${i}" aria-current="${i === 0}" aria-label="Фото ${i + 1}"><img src="${src(p.img)}" alt="${esc(p.name)}, фото ${i + 1}" style="${i === 1 ? 'transform:scaleX(-1)' : i === 2 ? 'transform:rotate(-8deg) scale(.9)' : ''}"></button>`).join('')}</div>` : ''}
         </div>
         <div>
           <div style="display:flex;gap:8px">${p.reg ? '<span class="pill pill-reg">В регистрации</span>' : `<span class="pill pill-new">${esc(p.group)}</span>`}</div>
@@ -485,9 +485,9 @@
   };
   V.promo = () => `${crumbs([['Акции']])}<div class="wrap"><div class="page-title"><h1>Акции</h1></div>
     ${D.promos && D.promos.length ? `<div class="promos">${D.promos.map(promoCard).join('')}</div><div style="height:72px"></div>`
-      : `<div class="state" style="max-width:none;margin-top:0"><div class="round">${icon('info')}</div><h1 style="font-size:20px">Сейчас акций нет</h1><p>Следите за новостями — о новых акциях мы сообщаем здесь и в Instagram.</p><div class="btns"><a class="btn btn-outline" href="#/news">Новости</a><a class="btn btn-primary" href="#/catalog">Каталог препаратов${icon('chevron')}</a></div></div>`}</div>`;
+      : `<div class="state" style="max-width:none;margin-top:0"><div class="round">${icon('info')}</div><h2 style="font-size:20px">Сейчас акций нет</h2><p>Следите за новостями — о новых акциях мы сообщаем здесь и в Instagram.</p><div class="btns"><a class="btn btn-outline" href="#/news">Новости</a><a class="btn btn-primary" href="#/catalog">Каталог препаратов${icon('chevron')}</a></div></div>`}</div>`;
   V.newsEmpty = () => `${crumbs([['Новости']])}<div class="wrap"><div class="page-title"><h1>Новости компании</h1></div>
-    <div class="state" style="max-width:none;margin-top:0"><div class="round">${icon('file')}</div><h1 style="font-size:20px">Новостей пока нет</h1><p>Здесь будут появляться новости о новых препаратах, производстве и компании. А пока посмотрите новинки в каталоге.</p><div class="btns"><a class="btn btn-outline" href="#/about">О компании</a><a class="btn btn-primary" href="#/catalog">Новинки каталога${icon('chevron')}</a></div></div></div>`;
+    <div class="state" style="max-width:none;margin-top:0"><div class="round">${icon('file')}</div><h2 style="font-size:20px">Новостей пока нет</h2><p>Здесь будут появляться новости о новых препаратах, производстве и компании. А пока посмотрите новинки в каталоге.</p><div class="btns"><a class="btn btn-outline" href="#/about">О компании</a><a class="btn btn-primary" href="#/catalog">Новинки каталога${icon('chevron')}</a></div></div></div>`;
 
   /* product list (replaces the price list: the catalog has no prices) */
   const pl = { q: '', f: 'all' };
@@ -682,7 +682,11 @@
     const url = l => SITE + toPath(rest, LBASE(l));
     let desc = DESC[r.name] || DESC.home;
     if (nw) desc = String(L(nw.text) || L(nw.title));
-    else if (p) desc = `${p.name}${p.inn ? ' (' + p.inn + ')' : ''} — ${p.meta}. ${p.use || p.props || ''}`;
+    else if (p) {
+      desc = `${p.name}${p.inn ? ' (' + p.inn + ')' : ''} — ${p.meta}. ${p.use || p.props || ''}`;
+      if (desc.length < 120) desc += { ru: ' Производитель — Sharq Darmon, Ташкент.', uz: ' Ishlab chiqaruvchi — Sharq Darmon, Toshkent.', en: ' Manufacturer: Sharq Darmon, Tashkent.' }[LANG];
+      if (p.reg && desc.length < 150) desc += { ru: ' Проходит государственную регистрацию.', uz: ' Davlat ro‘yxatidan o‘tmoqda.', en: ' Currently in state registration.' }[LANG];
+    }
     else if (c) desc = `${tr(c.name)}: ${D.products.filter(x => x.cat === c.id).map(x => x.name).slice(0, 8).join(', ')} — ${DESC.catalog}`;
     desc = clip(desc);
     document.documentElement.lang = LANG;
@@ -718,7 +722,8 @@
     main.innerHTML = view(r.arg);
     const nw = r.name === 'news' && r.arg ? NEWS.find(x => x.id === r.arg) : null;
     const sub = nw ? L(nw.title) : r.name === 'product' && P[r.arg] ? P[r.arg].name : r.name === 'category' && CAT[r.arg] ? CAT[r.arg].name : TITLES[r.name];
-    document.title = r.name === 'home' ? TITLES.home : `${sub || 'Страница не найдена'} — Sharq Darmon`;
+    const PT = { ru: 'инструкция, показания', uz: 'yo‘riqnoma, qo‘llanilishi', en: 'uses and dosage' };
+    document.title = r.name === 'home' ? TITLES.home : r.name === 'product' && P[r.arg] ? `${P[r.arg].name} — ${PT[LANG]} | Sharq Darmon` : `${sub || 'Страница не найдена'} — Sharq Darmon`;
     setHead(V[r.name] ? r : { name: 'notfound' }, tr(document.title));
     if (r.name !== 'search') { const s = $('#search'); if (s && document.activeElement !== s) s.value = ''; }
   }

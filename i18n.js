@@ -218,6 +218,7 @@
 
   const plural = n => `${n} ta preparat`;
   let P = [
+    [/^(.+), фото (\d+)$/, (m, n, k) => `${n}, foto ${k}`],
     [/^Акция до (.+)$/, (m, d) => `Aksiya ${d} gacha`],
     [/^Не удалось отправить\. Позвоните нам: (.+)$/, (m, p) => `Yuborib bo‘lmadi. Bizga qo‘ng‘iroq qiling: ${p}`],
     [/^(\d+) препарат(ов|а)?$/, (m, n) => plural(n)],
