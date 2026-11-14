@@ -1,0 +1,8 @@
+# Local Netlify folder (local blobs, function builds)
+.netlify
+node_modules
+.DS_Store
+# Admin login/password — never commit
+.admin-credentials
+# Intermediate image crops
+assets/raw

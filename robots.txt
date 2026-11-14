@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /search/
+Disallow: /uz/search/
+Disallow: /en/search/
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://sharq-darmon.uz/sitemap.xml
