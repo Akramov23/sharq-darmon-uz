@@ -95,7 +95,7 @@
 
   function card(p) {
     return `<article class="card" data-card="${p.id}">
-      <a class="media" href="#/product/${p.id}" aria-label="${esc(p.name)}">${img(p)}${p.reg || p.dist ? statusPill(p) : PROMO_FOR[p.id] ? `<span class="pill pill-promo">Акция</span>` : ''}</a>
+      <a class="media${p.img ? '' : ' noimg'}" href="#/product/${p.id}" aria-label="${esc(p.name)}">${p.img ? img(p) : ''}${p.reg || p.dist ? statusPill(p) : PROMO_FOR[p.id] ? `<span class="pill pill-promo">Акция</span>` : ''}</a>
       <span class="meta">${esc(p.meta)}</span>
       <a class="name" href="#/product/${p.id}">${esc(p.name)}</a>
       <span class="inn">${esc(p.inn)}</span>
@@ -318,11 +318,11 @@
     const related = D.products.filter(x => x.id !== p.id && x.cat === p.cat).sort((a, b) => rankOf(a) - rankOf(b)).slice(0, 4);
     return `${crumbs([['Каталог', '#/catalog'], ...(c ? [[c.name, '#/catalog/' + c.id]] : []), [p.name]])}
     <div class="wrap" style="padding-top:24px">
-      <div class="pdp">
-        <div class="gallery">
+      <div class="pdp${p.img ? '' : ' noimg'}">
+        ${p.img ? `<div class="gallery">
           <div class="main" id="pdp-main">${img(p)}</div>
           ${p.img ? `<div class="thumbs">${[0, 1, 2].map(i => `<button type="button" data-thumb="${i}" aria-current="${i === 0}" aria-label="Фото ${i + 1}"><img src="${src(p.img)}" alt="${esc(p.name)}, фото ${i + 1}" style="${i === 1 ? 'transform:scaleX(-1)' : i === 2 ? 'transform:rotate(-8deg) scale(.9)' : ''}"></button>`).join('')}</div>` : ''}
-        </div>
+        </div>` : ''}
         <div>
           <div style="display:flex;gap:8px">${p.reg || p.dist ? statusPill(p) : `<span class="pill pill-new">${esc(p.group)}</span>`}</div>
           <h1>${esc(p.name)}</h1>
