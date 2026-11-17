@@ -37,5 +37,5 @@
   SD.news = (C.news || []).filter(x => x.published !== false && x.title && x.title.ru).sort((a, b) => String(b.date).localeCompare(String(a.date)));
   window.SD_TEXTS = texts;
   // Phones / e-mail changed in the admin panel replace the old ones in every text on the site.
-  window.SD_CONTACT_SWAP = [['+998 78 888 70 00', s.phone], ['+998 77 001 71 23', s.phoneSales], ['sharq-darmon@mail.ru', s.email]].filter(([a, b]) => b && b !== a);
+  window.SD_CONTACT_SWAP = [['+998 78 888 70 00', s.phone], ['+998 77 001 71 23', s.phoneSales], ['+998 97 758 02 22', s.phoneContract], ['sharq-darmon@mail.ru', s.email]].filter(([a, b]) => b && b !== a);
 })();

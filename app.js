@@ -6,6 +6,10 @@
   const MADE = D.products.filter(p => !p.reg).length, REG = D.products.length - MADE;
   const S = D.settings || {};
   const PHONE = S.phone || '+998 78 888 70 00';
+  // Contract manufacturing has its own number (also reachable in Telegram).
+  const CONTRACT = '+998 97 758 02 22', CONTRACT_NOW = S.phoneContract || CONTRACT;
+  const SALES_NOW = S.phoneSales || '+998 77 001 71 23', telHref = p => 'tel:+' + String(p).replace(/\D/g, '');
+  const CONTRACT_TEL = 'tel:+' + CONTRACT_NOW.replace(/\D/g, ''), CONTRACT_TG = 'https://t.me/+' + CONTRACT_NOW.replace(/\D/g, '');
   // uploaded files live at /img/..., bundled ones under /assets/
   // Content, uploaded images and forms live on the admin server (Netlify); the pages may be hosted elsewhere.
   const API = ((document.querySelector('script[src*="/api/content.js"]') || {}).src || '').replace(/\/api\/content\.js.*$/, '');
@@ -113,7 +117,7 @@
         <div class="btns"><a class="btn btn-white btn-sm" href="#/price-list">${icon('file')}Перечень продукции</a><a class="btn btn-ghost-white btn-sm" href="#/contacts">${icon('phone')}Отдел продаж</a></div>
       </div>
       <div class="contract">
-        <div class="text"><span class="eyebrow">Контрактное производство</span><h3>Таблетки, капсулы, саше и суппозитории</h3><p>Выпустим препарат или БАД по вашей рецептуре на мощностях завода в Ташкенте. Тел.: +998 77 001 71 23</p><a class="btn btn-outline btn-sm" href="#/tabletting">Подробнее об услугах${icon('chevron')}</a></div>
+        <div class="text"><span class="eyebrow">Контрактное производство</span><h3>Таблетки, капсулы, саше и суппозитории</h3><p>Выпустим препарат или БАД по вашей рецептуре на мощностях завода в Ташкенте. Тел.: ${CONTRACT}</p><div class="btns"><a class="btn btn-outline btn-sm" href="#/tabletting">Подробнее об услугах${icon('chevron')}</a><a class="btn btn-tg btn-sm" href="${CONTRACT_TG}" target="_blank" rel="noopener">${icon('send')}Telegram</a></div></div>
         <div class="photo" role="img" aria-label="Таблетки"></div>
       </div>
     </div>`;
@@ -324,7 +328,7 @@
           <div class="buybox">
             <b style="font-size:17px">Где купить</b>
             <p style="margin:0;color:var(--ink-2);line-height:1.55">${p.reg ? `${esc(p.name)} проходит государственную регистрацию и пока не поступил в продажу. Узнать о сроках можно в колл-центре завода.` : `${esc(p.name)} продаётся в аптеках Узбекистана. О наличии в вашем городе подскажет колл-центр завода.`}</p>
-            <div class="row"><span class="btn btn-primary">${icon('phone')}+998 78 888 70 00</span><a class="btn btn-outline" href="#/feedback">Задать вопрос</a></div>
+            <div class="row"><a class="btn btn-primary" href="${telHref(PHONE)}">${icon('phone')}+998 78 888 70 00</a><a class="btn btn-outline" href="#/feedback">Задать вопрос</a></div>
             <div class="alert" role="note">${icon('info')}<div><b>Перед применением</b><p>Имеются противопоказания. Проконсультируйтесь с врачом и прочитайте инструкцию.</p></div></div>
             <div class="perks"><span>${icon('factory')}Произведено в Ташкенте</span><span>${icon('shieldCheck')}Стандарты GMP</span></div>
           </div>
@@ -373,6 +377,8 @@
     <section class="section" style="padding-top:0"><div class="wrap">${reel()}</div></section>
     <section class="section" style="padding-top:0"><div class="wrap"><h2 class="h2">Поставщики субстанций</h2><p class="sub-note">Сырьё и вспомогательные вещества для производства</p>${logos(D.partners, 'logos-4')}<h2 class="h2" style="margin-top:48px">Партнёры и аптечные сети</h2><p class="sub-note">Дистрибьюторы и аптеки, через которые препараты Sharq Darmon попадают к покупателям</p>${logos(D.clients, 'logos-4')}</div></section>`;
 
+  const regionsGrid = () => `<div class="regions">${D.regions.map(r => `<div><b>${icon('pin')}${r}</b><small>Контакт через колл-центр</small><a href="tel:+${PHONE.replace(/\D/g, '')}">+998 78 888 70 00</a></div>`).join('')}</div>`;
+
   V.contacts = () => `${crumbs([['Контакты']])}<div class="wrap">
     <div class="page-title"><h1>Контакты</h1></div>
     <div class="contact-cards">
@@ -394,7 +400,10 @@
         <button class="btn btn-primary btn-block" type="submit">Отправить</button>
       </form>
     </div>
-    <div class="alert" role="note" style="margin-bottom:72px">${icon('clock')}<div><b>Время работы</b><p>Отдел продаж принимает звонки с 9:00 до 18:00, понедельник — суббота.</p></div></div>
+    <div class="alert" role="note" style="margin-bottom:56px">${icon('clock')}<div><b>Время работы</b><p>Отдел продаж принимает звонки с 9:00 до 18:00, понедельник — суббота.</p></div></div>
+    <section class="reps-block" id="medreps"><h2 class="h2">Медицинские и торговые представители</h2>
+      <p class="sub-note">Медицинские и торговые представители Sharq Darmon работают с аптеками и клиниками во всех регионах. Выберите регион, чтобы связаться с представителем.</p>
+      ${regionsGrid()}</section>
   </div>`;
 
   V.feedback = () => `${crumbs([['Обратная связь']])}<div class="wrap">
@@ -433,13 +442,13 @@
       <div class="cols3"><div><h3>Обязанности</h3><ul class="ticks"><li>${icon('check')}Выполнение ежемесячного плана продаж</li><li>${icon('check')}Обеспечение продукцией закреплённых торговых точек</li><li>${icon('check')}Ежедневный объезд точек по утверждённому маршруту</li><li>${icon('check')}Расширение клиентской базы, мерчандайзинг, заключение договоров</li></ul></div>
         <div><h3>Требования</h3><ul class="ticks"><li>${icon('check')}Знание русского и узбекского языков</li><li>${icon('check')}Желание расти и развиваться</li></ul></div>
         <div><h3>Условия</h3><ul class="ticks"><li>${icon('check')}Оклад + процент + бонус</li><li>${icon('check')}Карьерный рост и дружный коллектив</li><li>${icon('check')}График 6/1, пн–сб 9:00–18:00</li></ul></div></div></article>
-    <div class="panel soft" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:72px"><div><b style="display:block;margin-bottom:4px">Вопросы по вакансиям</b><span style="color:var(--muted);font-size:13.5px">Шахзод · +998 77 001 71 23 · sharq-darmon@mail.ru · звонки с 9:00 до 18:00</span></div><span class="btn btn-outline btn-sm">${icon('phone')}+998 77 001 71 23</span></div>
+    <div class="panel soft" style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:72px"><div><b style="display:block;margin-bottom:4px">Вопросы по вакансиям</b><span style="color:var(--muted);font-size:13.5px">Шахзод · +998 77 001 71 23 · sharq-darmon@mail.ru · звонки с 9:00 до 18:00</span></div><a class="btn btn-outline btn-sm" href="${telHref(SALES_NOW)}">${icon('phone')}+998 77 001 71 23</a></div>
   </div>`;
 
   V.medreps = () => `${crumbs([['Медпредставители / Торговые представители']])}<div class="wrap">
     <div class="page-title"><h1>Медицинские и торговые представители</h1></div>
     <p class="lead" style="max-width:none">Медицинские и торговые представители Sharq Darmon работают с аптеками и клиниками во всех регионах. Выберите регион, чтобы связаться с представителем.</p>
-    <div class="regions">${D.regions.map(r => `<div><b>${icon('pin')}${r}</b><small>Контакт через колл-центр</small><a href="tel:+${PHONE.replace(/\D/g, '')}">+998 78 888 70 00</a></div>`).join('')}</div>
+    ${regionsGrid()}
     <div class="banner"><div><h2>Хотите стать медицинским представителем?</h2><p>Открыт набор во всех регионах — обучение и служебный автомобиль.</p></div><a class="btn btn-white btn-sm" href="#/career">Смотреть вакансию${icon('chevron')}</a></div>
   </div>`;
 
@@ -463,12 +472,12 @@
     <div class="tabs" style="margin-top:20px">${Object.entries(SERVICES).map(([k, v]) => `<a href="#/${k}" aria-selected="${k === kind}">${v.tab}</a>`).join('')}</div>
     <div class="svc-hero"><div><span class="eyebrow">Контрактное производство</span>
       <h1>${sv.title}</h1><p>${sv.lead}</p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-primary" type="button" data-apply="${sv.tab}" data-kind="project">Обсудить проект${icon('chevron')}</button><span class="btn btn-outline">${icon('phone')}+998 77 001 71 23</span></div></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-primary" type="button" data-apply="${sv.tab}" data-kind="project">Обсудить проект${icon('chevron')}</button><a class="btn btn-outline" href="${CONTRACT_TEL}">${icon('phone')}${CONTRACT}</a></div></div>
       ${sv.photo ? `<div class="photo" style="background-image:url('/assets/${sv.photo}')" role="img" aria-label="${sv.tab}"></div>` : `<div class="photo svc-art" aria-hidden="true">${icon(sv.icon)}</div>`}</div>
     <h2 class="h2">Что мы предлагаем</h2>
     <div class="offer">${sv.offer.map(([i, b, p]) => `<div><span class="ibox">${icon(i)}</span><b>${b}</b><p>${p}</p></div>`).join('')}</div>
     <div class="process"><h2>Как мы работаем</h2><ol>${[['Знакомство', 'Вы приезжаете на завод и рассказываете об идее будущего продукта.'], ['Рекомендации', 'Мы предлагаем рецептуру, форму выпуска и упаковку.'], ['Объём услуги', 'Частичная или полная поддержка — часть задач можно оставить за собой.'], ['Выпуск', 'Производим и упаковываем продукцию под вашей маркой.']].map(([b, p], i) => `<li><span class="n">${i + 1}</span><b>${b}</b><p>${p}</p></li>`).join('')}</ol></div>
-    <div class="alert" role="note" style="margin-bottom:72px">${icon('phone')}<div><b>Контрактное производство</b><p>Обсудить проект: +998 77 001 71 23. Справки о препаратах — колл-центр +998 78 888 70 00.</p></div></div></div>`;
+    <div class="alert" role="note" style="margin-bottom:72px">${icon('phone')}<div><b>Контрактное производство</b><p>Обсудить проект: +998 97 758 02 22. Справки о препаратах — колл-центр +998 78 888 70 00.</p></div></div></div>`;
   };
   V.tabletting = () => service('tabletting');
   V.capsulation = () => service('capsulation');
@@ -513,8 +522,8 @@
       <a class="sr-only" href="#main">К содержимому</a>
       <div class="utility"><div class="wrap">
         <div class="grow">${icon('factory')}<span>Фармацевтический завод Sharq Darmon · Ташкент</span></div>
-        <a class="hide-sm" href="#/promo">Акции</a><a class="hide-sm" href="#/news">Новости</a><a class="hide-sm" href="#/price-list">Перечень продукции</a><a class="hide-sm" href="#/about">О Нас</a><a class="hide-sm" href="#/contacts">Контакты</a>
-        <span class="phone">${icon('phone')}+998 78 888 70 00</span>
+        <a class="hide-sm hot" href="#/promo">Акции</a><a class="hide-sm hot" href="#/news">Новости</a><a class="hide-sm" href="#/price-list">Перечень продукции</a><a class="hide-sm" href="#/about">О Нас</a><a class="hide-sm" href="#/contacts">Контакты</a>
+        <a class="phone" href="${telHref(PHONE)}">${icon('phone')}+998 78 888 70 00</a>
         <div class="lang" role="group" aria-label="Язык">${[['ru', 'RU'], ['uz', 'UZ'], ['en', 'EN']].map(([k, t]) => `<button type="button" data-lang="${k}" aria-pressed="${LANG === k}" lang="${k}">${t}</button>`).join('')}</div>
       </div></div>
       <header class="header" id="header"><div class="wrap">
@@ -619,7 +628,7 @@
       home: 'Sharq Darmon (Шарк Дармон) — фармацевтический завод в Ташкенте: производство лекарств по стандартам GMP. Каталог препаратов для аптек и дистрибьюторов, контрактное производство.',
       catalog: 'Каталог препаратов Sharq Darmon: противовирусные, антибиотики, обезболивающие, сердечно-сосудистые, витамины и другие лекарства производства Узбекистана.',
       about: 'Sharq Darmon — фармацевтический завод в Бектемирском районе Ташкента. Производство по стандартам GMP, сертификаты, история компании.',
-      contacts: 'Контакты Sharq Darmon: Ташкент, Бектемирский район, ул. Хусейна Байкары, 27А. Телефон +998 78 888 70 00, контрактное производство +998 77 001 71 23.',
+      contacts: 'Контакты Sharq Darmon: Ташкент, Бектемирский район, ул. Хусейна Байкары, 27А. Телефон +998 78 888 70 00, контрактное производство +998 97 758 02 22.',
       feedback: 'Обратная связь с фармацевтическим заводом Sharq Darmon: вопросы о препаратах, сотрудничестве и качестве продукции.',
       career: 'Вакансии Sharq Darmon: медицинские и торговые представители во всех регионах Узбекистана.',
       medreps: 'Медицинские и торговые представители Sharq Darmon по регионам Узбекистана — контакты для аптек и клиник.',
@@ -635,7 +644,7 @@
       home: 'Sharq Darmon — Toshkentdagi farmatsevtika zavodi: GMP standartlari bo‘yicha dori-darmon ishlab chiqarish. Dorixonalar va distribyutorlar uchun preparatlar katalogi, kontrakt ishlab chiqarish.',
       catalog: 'Sharq Darmon preparatlari katalogi: virusga qarshi, antibiotiklar, og‘riq qoldiruvchi, yurak-qon tomir, vitaminlar va O‘zbekistonda ishlab chiqarilgan boshqa dorilar.',
       about: 'Sharq Darmon — Toshkentning Bektemir tumanidagi farmatsevtika zavodi. GMP standartlari bo‘yicha ishlab chiqarish, sertifikatlar, kompaniya tarixi.',
-      contacts: 'Sharq Darmon kontaktlari: Toshkent, Bektemir tumani, Husayn Boyqaro ko‘chasi, 27A. Telefon +998 78 888 70 00, kontrakt ishlab chiqarish +998 77 001 71 23.',
+      contacts: 'Sharq Darmon kontaktlari: Toshkent, Bektemir tumani, Husayn Boyqaro ko‘chasi, 27A. Telefon +998 78 888 70 00, kontrakt ishlab chiqarish +998 97 758 02 22.',
       feedback: 'Sharq Darmon farmatsevtika zavodi bilan aloqa: preparatlar, hamkorlik va mahsulot sifati bo‘yicha savollar.',
       career: 'Sharq Darmon vakansiyalari: O‘zbekistonning barcha hududlarida tibbiy va savdo vakillari.',
       medreps: 'Sharq Darmon tibbiy va savdo vakillari hududlar bo‘yicha — dorixonalar va klinikalar uchun kontaktlar.',
@@ -651,7 +660,7 @@
       home: 'Sharq Darmon is a pharmaceutical plant in Tashkent, Uzbekistan: GMP-standard drug manufacturing, a product catalogue for pharmacies and distributors, and contract manufacturing.',
       catalog: 'Sharq Darmon product catalogue: antivirals, antibiotics, painkillers, cardiovascular drugs, vitamins and other medicines made in Uzbekistan.',
       about: 'Sharq Darmon is a pharmaceutical plant in the Bektemir district of Tashkent. GMP-standard production, certificates and company history.',
-      contacts: 'Sharq Darmon contacts: 27A Husayn Boyqaro street, Bektemir district, Tashkent. Phone +998 78 888 70 00, contract manufacturing +998 77 001 71 23.',
+      contacts: 'Sharq Darmon contacts: 27A Husayn Boyqaro street, Bektemir district, Tashkent. Phone +998 78 888 70 00, contract manufacturing +998 97 758 02 22.',
       feedback: 'Contact the Sharq Darmon pharmaceutical plant: questions about our medicines, partnership and product quality.',
       career: 'Careers at Sharq Darmon: medical and sales representatives in every region of Uzbekistan.',
       medreps: 'Sharq Darmon medical and sales representatives by region of Uzbekistan — contacts for pharmacies and clinics.',
@@ -670,7 +679,7 @@
     telephone: '+998788887000', email: 'sharq-darmon@mail.ru',
     address: { '@type': 'PostalAddress', streetAddress: 'ул. Хусейна Байкары, 27А', addressLocality: 'Ташкент', addressRegion: 'Бектемирский район', addressCountry: 'UZ' },
     contactPoint: [{ '@type': 'ContactPoint', telephone: '+998788887000', contactType: 'customer service', areaServed: 'UZ', availableLanguage: ['ru', 'uz', 'en'] },
-      { '@type': 'ContactPoint', telephone: '+998770017123', contactType: 'sales', name: 'Контрактное производство' }] };
+      { '@type': 'ContactPoint', telephone: '+998977580222', contactType: 'sales', name: 'Контрактное производство' }] };
   function headTag(sel, make) { let el = document.head.querySelector(sel); if (!el) { el = make(); document.head.appendChild(el); } return el; }
   const meta = (attr, key, val) => headTag(`meta[${attr}="${key}"]`, () => { const m = document.createElement('meta'); m.setAttribute(attr, key); return m; }).setAttribute('content', val);
   const clip = (t, n = 160) => { t = String(t).replace(/\s+/g, ' ').trim(); return t.length > n ? t.slice(0, n - 1).replace(/[\s,.;:—-]+\S*$/, '') + '…' : t; };
@@ -738,6 +747,28 @@
   });
   // Templates still write '#/route'; turn every such link into a real path.
   const fixLinks = root => root.querySelectorAll && root.querySelectorAll('a[href^="#/"]').forEach(a => a.setAttribute('href', toPath(a.getAttribute('href'))));
+  // Every phone number in the texts becomes a tel: link — one tap starts the call.
+  const PHONE_RE = /\+998[ \u00a0]?\d{2}[ \u00a0]?\d{3}[ \u00a0-]?\d{2}[ \u00a0-]?\d{2}/g;
+  const swapPhone = t => (window.SD_CONTACT_SWAP || []).reduce((r, [a, b]) => r.split(a).join(b), t);
+  function linkPhones(root) {
+    if (!root || !root.isConnected) return;
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), nodes = [];
+    for (let n; (n = w.nextNode());) if (n.nodeValue.includes('+998') && !n.parentElement.closest('a, button, script, style, textarea, title, [contenteditable]')) nodes.push(n);
+    for (const node of nodes) {
+      const text = node.nodeValue, frag = document.createDocumentFragment(); let last = 0, hit = false;
+      for (const m of text.matchAll(PHONE_RE)) {
+        hit = true;
+        frag.append(text.slice(last, m.index));
+        const a = document.createElement('a'); a.className = 'tel'; a.href = telHref(swapPhone(m[0])); a.textContent = m[0];
+        frag.append(a); last = m.index + m[0].length;
+      }
+      if (hit) { frag.append(text.slice(last)); node.replaceWith(frag); }
+    }
+  }
+  // Runs after i18n.js has translated the freshly added nodes (it matches whole text nodes).
+  let telQueue = [], telTimer = 0;
+  const queuePhones = n => { telQueue.push(n); if (!telTimer) telTimer = setTimeout(() => { const q = telQueue; telQueue = []; telTimer = 0; q.forEach(linkPhones); }, 0); };
+  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1 && !n.matches('a.tel')) queuePhones(n); }))).observe(document.body, { childList: true, subtree: true });
   new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) { if (n.matches('a[href^="#/"]')) n.setAttribute('href', toPath(n.getAttribute('href'))); fixLinks(n); } }))).observe(document.body, { childList: true, subtree: true });
   window.addEventListener('popstate', () => onNav(true));
   function onNav(back) { closeOverlay(true); $('#mega').hidden = true; render(); if (!back) window.scrollTo({ top: 0, behavior: 'instant' }); $('#main').focus({ preventScroll: true }); }
