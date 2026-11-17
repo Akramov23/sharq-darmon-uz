@@ -57,13 +57,15 @@
     [/Суппозитории/g, 'Suppozitoriylar'], [/Таблетки вагинальные/g, 'Vaginal tabletkalar'], [/Таблетки п\/о/g, 'Plyonka qobiqli tabletkalar'],
     [/Таблетки кишечнорастворимые/g, 'Ichakda eriydigan tabletkalar'], [/Таблетки жевательные/g, 'Chaynaladigan tabletkalar'],
     [/Таблетки с модифицированным высвобождением/g, 'Modifikatsiyalangan ajraluvchi tabletkalar'], [/Таблетки для имплантации/g, 'Implantatsiya uchun tabletkalar'],
-    [/Таблетки/g, 'Tabletkalar'], [/таблетки/g, 'tabletkalar'], [/Капсулы/g, 'Kapsulalar'], [/Драже/g, 'Draje'], [/саше/g, 'sashe'],
+    [/Таблетки/g, 'Tabletkalar'], [/таблетки/g, 'tabletkalar'], [/Капсулы/g, 'Kapsulalar'], [/Мазь/g, 'Malham'], [/Крем/g, 'Krem'], [/^Порошок$/g, 'Kukun'], [/Драже/g, 'Draje'], [/саше/g, 'sashe'],
     [/для детей/g, 'bolalar uchun'], [/(\d) мес/g, '$1 oy'], [/ лет/g, ' yosh'], [/ и /g, ' va '], [/мкг/g, 'mkg'], [/мг/g, 'mg'], [/(\d) г\b|(\d) г(?=[ ,)]|$)/g, (m, a, b) => `${a || b} g`],
     [/ЕД/g, 'TB'], [/МЕ/g, 'XB'],
   ];
   const meta = s => META.reduce((t, [re, to]) => t.replace(re, to), s);
 
   let T = {
+    // distribution portfolio (catalog-dist.js)
+    'Дистрибуция': 'Distribyutsiya', 'Мазь / крем': 'Malham / krem', 'Оригинальный препарат': 'Original preparat', 'Аналог': 'Analog', 'О наличии и условиях поставки подскажет колл-центр завода.': 'Mavjudligi va yetkazib berish shartlari haqida zavod call-markazi ma’lumot beradi.', 'Подробная информация о препарате — в колл-центре завода.': 'Preparat haqida batafsil ma’lumot — zavod call-markazida.',
     // header, navigation, footer
     'К содержимому': 'Asosiy qismga', 'Фармацевтический завод Sharq Darmon · Ташкент': 'Sharq Darmon farmatsevtika zavodi · Toshkent',
     'Перечень продукции': 'Mahsulotlar ro‘yxati', 'О Нас': 'Biz haqimizda', 'Заказ через бот': 'Bot orqali buyurtma', 'Заказ через Telegram-бот': 'Telegram-bot orqali buyurtma', 'Акции': 'Aksiyalar', 'Акция': 'Aksiya', 'Все новости': 'Barcha yangiliklar', 'Все акции': 'Barcha aksiyalar', 'Сейчас акций нет': 'Hozircha aksiyalar yo‘q', 'Следите за новостями — о новых акциях мы сообщаем здесь и в Instagram.': 'Yangiliklarni kuzatib boring — yangi aksiyalar haqida shu yerda va Instagram’da xabar beramiz.', 'Предыдущая акция': 'Oldingi aksiya', 'Следующая акция': 'Keyingi aksiya', 'Скоро': 'Tez orada', 'Заказ через Telegram-бот скоро появится. Пока оформить заказ поможет оператор.': 'Telegram-bot orqali buyurtma berish tez orada ishga tushadi. Hozircha buyurtmani operator rasmiylashtirib beradi.', 'Связаться с оператором': 'Operator bilan bog‘lanish', 'Отдел продаж — аптекам и оптовым покупателям': 'Savdo bo‘limi — dorixonalar va ulgurji xaridorlar uchun', 'Задать вопрос на сайте': 'Saytda savol berish', 'Контакты': 'Kontaktlar', 'Каталог': 'Katalog', 'Поиск': 'Qidiruv', 'Найти': 'Topish',

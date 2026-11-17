@@ -19,7 +19,7 @@ window.SD = {
   // products come from catalog.js (generated from the PDF catalog)
   products: [],
 
-  forms: { tablets: 'Таблетки', capsules: 'Капсулы', supp: 'Суппозитории', sachet: 'Порошок / саше', dragee: 'Драже' },
+  forms: { tablets: 'Таблетки', capsules: 'Капсулы', supp: 'Суппозитории', sachet: 'Порошок / саше', dragee: 'Драже', ointment: 'Мазь / крем' },
 
   trust: [
     ['factory', 'Собственное производство', 'Завод в Ташкенте'],

@@ -568,7 +568,8 @@ table.price-table { width: 100%; border-collapse: collapse; min-width: 760px; fo
   .reel-frame { justify-self: center; }
 }
 .pill-reg { background: #eef2ff; color: #3730a3; }
-.media .pill-reg { position: absolute; top: 0; left: 0; z-index: 1; }
+.media .pill-reg, .media .pill-dist { position: absolute; top: 0; left: 0; z-index: 1; }
+.pill-dist { background: #e6f6f1; color: #0f6b57; }
 .pdp .pill-new { white-space: normal; }
 @media (max-width: 1100px) { .catalog { grid-template-columns: minmax(0, 1fr); } }
 .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }

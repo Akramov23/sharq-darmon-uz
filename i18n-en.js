@@ -25,12 +25,14 @@
     [/Суппозитории/g, 'Suppositories'], [/Таблетки вагинальные/g, 'Vaginal tablets'], [/Таблетки п\/о/g, 'Film-coated tablets'],
     [/Таблетки кишечнорастворимые/g, 'Enteric-coated tablets'], [/Таблетки жевательные/g, 'Chewable tablets'],
     [/Таблетки с модифицированным высвобождением/g, 'Modified-release tablets'], [/Таблетки для имплантации/g, 'Implant tablets'],
-    [/Таблетки/g, 'Tablets'], [/таблетки/g, 'tablets'], [/Капсулы/g, 'Capsules'], [/Драже/g, 'Dragées'], [/саше/g, 'sachet'],
+    [/Таблетки/g, 'Tablets'], [/таблетки/g, 'tablets'], [/Капсулы/g, 'Capsules'], [/Мазь/g, 'Ointment'], [/Крем/g, 'Cream'], [/^Порошок$/g, 'Powder'], [/Драже/g, 'Dragées'], [/саше/g, 'sachet'],
     [/для детей/g, 'for children'], [/(\d) мес/g, '$1 months'], [/ лет/g, ' years'], [/ и /g, ' and '], [/мкг/g, 'mcg'], [/мг/g, 'mg'],
     [/(\d) г\b|(\d) г(?=[ ,)]|$)/g, (m, a, b) => `${a || b} g`], [/ЕД/g, 'U'], [/МЕ/g, 'IU'], [/(\d),(\d)/g, '$1.$2'],
   ];
 
   const T = {
+    // distribution portfolio (catalog-dist.js)
+    'Дистрибуция': 'Distribution', 'Мазь / крем': 'Ointment / cream', 'Оригинальный препарат': 'Reference product', 'Аналог': 'Equivalent', 'О наличии и условиях поставки подскажет колл-центр завода.': 'Our call centre will advise on availability and supply terms.', 'Подробная информация о препарате — в колл-центре завода.': 'For detailed product information, contact our call centre.',
     'К содержимому': 'Skip to content', 'Фармацевтический завод Sharq Darmon · Ташкент': 'Sharq Darmon pharmaceutical plant · Tashkent',
     'Перечень продукции': 'Product list', 'О Нас': 'About us', 'Заказ через бот': 'Order via bot', 'Заказ через Telegram-бот': 'Order via Telegram bot', 'Акции': 'Promotions', 'Акция': 'Promotion', 'Все новости': 'All news', 'Все акции': 'All promotions', 'Сейчас акций нет': 'No promotions right now', 'Следите за новостями — о новых акциях мы сообщаем здесь и в Instagram.': 'Follow our news — we announce new promotions here and on Instagram.', 'Предыдущая акция': 'Previous promotion', 'Следующая акция': 'Next promotion', 'Скоро': 'Coming soon', 'Заказ через Telegram-бот скоро появится. Пока оформить заказ поможет оператор.': 'Ordering via our Telegram bot is coming soon. Until then, an operator will help you place an order.', 'Связаться с оператором': 'Contact an operator', 'Отдел продаж — аптекам и оптовым покупателям': 'Sales department — for pharmacies and wholesale buyers', 'Задать вопрос на сайте': 'Ask a question on the website', 'Контакты': 'Contacts', 'Каталог': 'Catalogue', 'Поиск': 'Search', 'Найти': 'Search',
     'Продукция': 'Products', 'Быстрые ссылки': 'Quick links', 'Sharq Darmon — на главную': 'Sharq Darmon — home',
