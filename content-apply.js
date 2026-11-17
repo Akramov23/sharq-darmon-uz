@@ -16,12 +16,12 @@
     const r = p.ru;
     for (const [l, M] of [['uz', UZ], ['en', EN]]) {
       const t = p[l] || {}, o = {};
-      for (const k of ['name', 'meta', 'group', 'inn', 'props', 'use', 'dose']) if (t[k]) o[k] = t[k];
+      for (const k of ['name', 'meta', 'group', 'inn', 'props', 'use', 'dose', 'orig', 'analog']) if (t[k]) o[k] = t[k];
       M[p.id] = o;
     }
     const o = { id: p.id, name: r.name, page: p.page || i + 1, meta: r.meta || '', inn: r.inn || '', cat: p.cat, form: p.form || 'tablets', img: p.img || '' };
-    for (const k of ['group', 'props', 'use', 'dose']) if (r[k]) o[k] = r[k];
-    if (p.reg) o.reg = true;
+    for (const k of ['group', 'props', 'use', 'dose', 'orig', 'analog']) if (r[k]) o[k] = r[k];
+    if (p.dist) o.dist = true; else if (p.reg) o.reg = true;
     if (p.popular) o.popular = true;
     return o;
   });

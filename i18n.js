@@ -291,7 +291,7 @@
       const u = CAT_TR[p.id] || {};
       p.ru = p.name; p.name = u.name || latin(p.name);
       p.meta = u.meta || meta(p.meta); if (p.group) p.group = u.group || GROUPS[p.group] || p.group;
-      for (const k of ['inn', 'props', 'use', 'dose']) if (u[k] !== undefined) p[k] = u[k];
+      for (const k of ['inn', 'props', 'use', 'dose', 'orig', 'analog']) if (u[k] !== undefined) p[k] = u[k];
     }
   }
 

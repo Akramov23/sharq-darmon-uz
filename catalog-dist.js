@@ -1,9 +1,12 @@
 // Distribution portfolio: products listed by the client (registration lists + photo lists, Nov 2026).
-// Not part of the admin-panel content: the category and its products are appended here for both
-// the static catalog and the content saved in the admin panel. Edit the list below by hand.
+// Moved into the admin-panel content (Nov 2026): edit them in the admin panel. This list is only used
+// as defaults for a fresh admin panel and as a fallback when the admin content has no such category.
 (function () {
   const SD = window.SD, catalog = window.SD_CATALOG;
   if (!SD || !Array.isArray(catalog)) return;
+  // Once the distribution products are saved in the admin panel, they are managed there (deletions included).
+  const C = window.SD_CONTENT;
+  if (C && Array.isArray(C.categories) && C.categories.some(c => c.id === 'distribution')) return;
   const LIST = [
  {
   "id": "dist-selena",
