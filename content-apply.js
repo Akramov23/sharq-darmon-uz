@@ -21,7 +21,7 @@
     }
     const o = { id: p.id, name: r.name, page: p.page || i + 1, meta: r.meta || '', inn: r.inn || '', cat: p.cat, form: p.form || 'tablets', img: p.img || '' };
     for (const k of ['group', 'props', 'use', 'dose', 'orig', 'analog']) if (r[k]) o[k] = r[k];
-    if (p.dist) o.dist = true; else if (p.reg) o.reg = true;
+    if (p.dist) o.dist = true; else if (p.reg) o.reg = true; else if (p.stock) o.stock = true;
     if (p.popular) o.popular = true;
     return o;
   });

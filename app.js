@@ -4,10 +4,12 @@
   const LANG = window.SD_I18N ? window.SD_I18N.lang : 'ru';
   D.products = window.SD_CATALOG;
   // made = produced at the plant, reg = in state registration, dist = distribution portfolio (catalog-dist.js)
-  const statusOf = p => (p.dist ? 'dist' : p.reg ? 'reg' : 'made'), rankOf = p => (p.dist ? 2 : p.reg ? 1 : 0);
-  const STATUS = { made: 'В производстве', reg: 'В регистрации', dist: 'Дистрибуция' };
-  const statusPill = p => (p.dist ? '<span class="pill pill-dist">Дистрибуция</span>' : p.reg ? '<span class="pill pill-reg">В регистрации</span>' : '');
-  const MADE = D.products.filter(p => statusOf(p) === 'made').length, REG = D.products.filter(p => statusOf(p) === 'reg').length, DIST = D.products.length - MADE - REG;
+  // stock = own product that is in the warehouse right now (counted in MADE, shown first)
+  const statusOf = p => (p.dist ? 'dist' : p.reg ? 'reg' : p.stock ? 'stock' : 'made'), rankOf = p => (p.dist ? 2 : p.reg ? 1 : p.stock ? -1 : 0);
+  const STATUS = { stock: 'Есть на складе', made: 'В производстве', reg: 'В регистрации', dist: 'Дистрибуция' };
+  const statusPill = p => (p.dist ? '<span class="pill pill-dist">Дистрибуция</span>' : p.reg ? '<span class="pill pill-reg">В регистрации</span>' : p.stock ? '<span class="pill pill-stock">Есть на складе</span>' : '');
+  const STOCK = D.products.filter(p => statusOf(p) === 'stock').length;
+  const MADE = D.products.filter(p => statusOf(p) === 'made').length + STOCK, REG = D.products.filter(p => statusOf(p) === 'reg').length, DIST = D.products.length - MADE - REG;
   const S = D.settings || {};
   const PHONE = S.phone || '+998 78 888 70 00';
   // Contract manufacturing has its own number (also reachable in Telegram).
@@ -95,7 +97,7 @@
 
   function card(p) {
     return `<article class="card" data-card="${p.id}">
-      <a class="media${p.img ? '' : ' noimg'}" href="#/product/${p.id}" aria-label="${esc(p.name)}">${p.img ? img(p) : ''}${p.reg || p.dist ? statusPill(p) : PROMO_FOR[p.id] ? `<span class="pill pill-promo">Акция</span>` : ''}</a>
+      <a class="media${p.img ? '' : ' noimg'}" href="#/product/${p.id}" aria-label="${esc(p.name)}">${p.img ? img(p) : ''}${p.reg || p.dist ? statusPill(p) : PROMO_FOR[p.id] ? `<span class="pill pill-promo">Акция</span>` : p.stock ? statusPill(p) : ''}</a>
       <span class="meta">${esc(p.meta)}</span>
       <a class="name" href="#/product/${p.id}">${esc(p.name)}</a>
       <span class="inn">${esc(p.inn)}</span>
@@ -154,8 +156,8 @@
     const pop = HOME_POP.map(id => P[id]);
     return `
     <section class="hero">
-      <div class="hero-card hero-video-card">
-        <video class="hero-video" src="/assets/hero-lab.mp4?v=2" poster="/assets/hero-lab.jpg" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+      <div class="hero-card hero-video-card"${S.heroVideo ? ` style="background-image:${S.heroPoster ? `url('${esc(S.heroPoster)}')` : 'none'}"` : ''}>
+        <video class="hero-video" src="${esc(S.heroVideo || '/assets/hero-lab.mp4?v=2')}"${S.heroVideo ? (S.heroPoster ? ` poster="${esc(S.heroPoster)}"` : '') : ' poster="/assets/hero-lab.jpg"'} autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
         <div class="hero-inner">
           <div class="chips"><span>Часто ищут:</span>${popularChips(S.chips && S.chips.length ? S.chips : ['Флустоп', 'Ибумиг', 'Цетиризин', 'Омепразол', 'Ацикловир'])}</div>
           <div>
@@ -253,7 +255,7 @@
       <div class="catalog">
         <aside class="filters" id="filters" aria-label="Фильтры">
           ${filterBox('cats', 'Категория', D.categories.map(c => [c.id, c.short || c.name]))}
-          ${filterBox('stock', 'Статус', [['made', 'В производстве'], ['reg', 'В регистрации'], ...(DIST ? [['dist', 'Дистрибуция']] : [])])}
+          ${filterBox('stock', 'Статус', [...(STOCK ? [['stock', 'Есть на складе']] : []), ['made', 'В производстве'], ['reg', 'В регистрации'], ...(DIST ? [['dist', 'Дистрибуция']] : [])])}
           ${filterBox('forms', 'Форма выпуска', Object.entries(D.forms))}
           <button class="btn btn-outline btn-sm" type="button" data-reset-filters>Сбросить фильтры</button>
         </aside>
@@ -324,7 +326,7 @@
           ${p.img ? `<div class="thumbs">${[0, 1, 2].map(i => `<button type="button" data-thumb="${i}" aria-current="${i === 0}" aria-label="Фото ${i + 1}"><img src="${src(p.img)}" alt="${esc(p.name)}, фото ${i + 1}" style="${i === 1 ? 'transform:scaleX(-1)' : i === 2 ? 'transform:rotate(-8deg) scale(.9)' : ''}"></button>`).join('')}</div>` : ''}
         </div>` : ''}
         <div>
-          <div style="display:flex;gap:8px">${p.reg || p.dist ? statusPill(p) : `<span class="pill pill-new">${esc(p.group)}</span>`}</div>
+          <div style="display:flex;gap:8px">${p.reg || p.dist ? statusPill(p) : `${p.stock ? statusPill(p) : ''}<span class="pill pill-new">${esc(p.group)}</span>`}</div>
           <h1>${esc(p.name)}</h1>
           <p class="sub">${esc(p.meta.replace(/ · /g, ' ').replace(/^(\S+)/, '$1'))}${p.group ? ' · ' + esc(p.group) : ''}</p>
           <dl class="specs">${p.inn ? `<dt>Действующее вещество</dt><dd>${esc(p.inn)}</dd>` : ''}<dt>Форма выпуска</dt><dd>${esc(p.meta)}</dd>${p.orig ? `<dt>Оригинальный препарат</dt><dd>${esc(p.orig)}</dd>` : ''}${p.analog ? `<dt>Аналог</dt><dd>${esc(p.analog)}</dd>` : ''}${p.dist ? '' : `<dt>Группа</dt><dd>${esc(p.group || CAT[p.cat].name)}</dd>`}${p.dist ? '' : '<dt>Производитель</dt><dd>ООО «Sharq Darmon», Ташкент</dd>'}<dt>Статус</dt><dd>${STATUS[statusOf(p)]}</dd></dl>
@@ -382,7 +384,22 @@
     <section class="section" style="padding-top:0"><div class="wrap">${reel()}</div></section>
     <section class="section" style="padding-top:0"><div class="wrap"><h2 class="h2">Поставщики субстанций</h2><p class="sub-note">Сырьё и вспомогательные вещества для производства</p>${logos(D.partners, 'logos-4')}<h2 class="h2" style="margin-top:48px">Партнёры и аптечные сети</h2><p class="sub-note">Дистрибьюторы и аптеки, через которые препараты Sharq Darmon попадают к покупателям</p>${logos(D.clients, 'logos-4')}</div></section>`;
 
-  const regionsGrid = () => `<div class="regions">${D.regions.map(r => `<div><b>${icon('pin')}${r}</b><small>Контакт через колл-центр</small><a href="tel:+${PHONE.replace(/\D/g, '')}">+998 78 888 70 00</a></div>`).join('')}</div>`;
+  // Medical / sales reps phone from the admin panel; empty → the call centre number.
+  const REPS = String(S.phoneReps || '').trim();
+  // Per-region numbers (settings.repsPhones) win over the common one.
+  const repPhone = r => String((S.repsPhones || {})[r] || '').trim() || REPS;
+  const regionsGrid = () => `<div class="regions">${D.regions.map(r => { const ph = repPhone(r); return `<div><b>${icon('pin')}${r}</b><small>${ph ? 'Медицинские и торговые представители' : 'Контакт через колл-центр'}</small><a href="${telHref(ph || PHONE)}">${esc(ph || '+998 78 888 70 00')}</a></div>`; }).join('')}</div>`;
+
+  // Factory point on the map: coordinates from the admin panel ("lat, lng"), else the Yandex organisation card.
+  const MAP = (() => {
+    const m = String(S.mapCoords || '').match(/(-?\d{1,2}(?:\.\d+)?)\s*[,; ]\s*(-?\d{1,3}(?:\.\d+)?)/);
+    const lat = m ? +m[1] : 41.243281, lng = m ? +m[2] : 69.350802;
+    if (!m || (Math.abs(lat - 41.243281) < 1e-6 && Math.abs(lng - 69.350802) < 1e-6)) return {
+      widget: 'https://yandex.uz/map-widget/v1/?ll=69.350802%2C41.243281&z=16&oid=74307780560&ol=biz',
+      route: 'https://yandex.uz/maps/org/sharq_darmon/74307780560/?ll=69.350802%2C41.243281&z=16&rtext=~41.243281%2C69.350802' };
+    return { widget: `https://yandex.uz/map-widget/v1/?ll=${lng}%2C${lat}&z=16&pt=${lng}%2C${lat}%2Cpm2rdm`,
+      route: `https://yandex.uz/maps/?ll=${lng}%2C${lat}&z=16&rtext=~${lat}%2C${lng}` };
+  })();
 
   V.contacts = () => `${crumbs([['Контакты']])}<div class="wrap">
     <div class="page-title"><h1>Контакты</h1></div>
@@ -394,8 +411,8 @@
     </div>
     <div class="split contact-split">
       <div class="map map-live">
-        <iframe src="https://yandex.uz/map-widget/v1/?ll=69.350802%2C41.243281&z=16&oid=74307780560&ol=biz&lang=${LANG === 'en' ? 'en_US' : LANG === 'uz' ? 'uz_UZ' : 'ru_RU'}" title="Sharq Darmon на Яндекс Картах" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
-        <a class="btn btn-white btn-sm map-route" href="https://yandex.uz/maps/org/sharq_darmon/74307780560/?ll=69.350802%2C41.243281&z=16&rtext=~41.243281%2C69.350802" target="_blank" rel="noopener">${icon('pin')}Построить маршрут${icon('chevron')}</a>
+        <iframe src="${MAP.widget}&lang=${LANG === 'en' ? 'en_US' : LANG === 'uz' ? 'uz_UZ' : 'ru_RU'}" title="Sharq Darmon на Яндекс Картах" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <a class="btn btn-white btn-sm map-route" href="${MAP.route}" target="_blank" rel="noopener">${icon('pin')}Построить маршрут${icon('chevron')}</a>
       </div>
       <form class="panel" data-form="question" novalidate style="display:flex;flex-direction:column;gap:16px">
         <h2 style="margin:0;font-size:19px">Задайте вопрос</h2>
@@ -517,7 +534,7 @@
       <div><h1 style="margin:0 0 6px;font-size:clamp(28px,3vw,38px);letter-spacing:-0.6px">Перечень продукции</h1><span style="color:var(--ink-2)">${MADE} препаратов в производстве · ${REG} в регистрации · по каталогу продукции Sharq Darmon</span></div>
       <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-outline" type="button" data-xlsx>${icon('download')}Скачать таблицу (CSV)</button><a class="btn btn-primary" href="assets/sharq-darmon-catalog.pdf" target="_blank" rel="noopener">${icon('file')}Каталог, PDF</a></div></div>
     <div class="toolbar"><div class="search" style="flex:0 1 340px;height:44px;border-width:1px;border-color:var(--line-2)">${icon('search')}<label class="sr-only" for="pl-q">Найти в перечне</label><input id="pl-q" type="search" placeholder="Название или действующее вещество" value="${esc(pl.q)}"></div>
-      ${[['all', `Все · ${D.products.length}`], ['made', `В производстве · ${MADE}`], ['reg', `В регистрации · ${REG}`], ...(DIST ? [['dist', `Дистрибуция · ${DIST}`]] : [])].map(([k, t]) => `<button class="chip" type="button" data-plf="${k}" aria-pressed="${pl.f === k}">${pl.f === k ? icon('check') : ''}${t}</button>`).join('')}</div>
+      ${[['all', `Все · ${D.products.length}`], ...(STOCK ? [['stock', `Есть на складе · ${STOCK}`]] : []), ['made', `В производстве · ${MADE - STOCK}`], ['reg', `В регистрации · ${REG}`], ...(DIST ? [['dist', `Дистрибуция · ${DIST}`]] : [])].map(([k, t]) => `<button class="chip" type="button" data-plf="${k}" aria-pressed="${pl.f === k}">${pl.f === k ? icon('check') : ''}${t}</button>`).join('')}</div>
     <div class="table-wrap"><table class="price-table"><thead><tr><th>№</th><th>Наименование</th><th>Форма выпуска</th><th>Действующее вещество</th><th>Статус</th></tr></thead><tbody id="pl-body">${priceRows().html}</tbody></table></div>
     <div class="alert" role="note" style="margin:24px 0 72px">${icon('phone')}<div><b>Аптекам и дистрибьюторам</b><p>Цены и условия поставки — в отделе продаж: +998 78 888 70 00, sharq-darmon@mail.ru.</p></div></div></div>`;
 
@@ -527,7 +544,7 @@
       <a class="sr-only" href="#main">К содержимому</a>
       <div class="utility"><div class="wrap">
         <div class="grow">${icon('factory')}<span>Фармацевтический завод Sharq Darmon · Ташкент</span></div>
-        <a class="hide-sm hot" href="#/promo">Акции</a><a class="hide-sm hot" href="#/news">Новости</a><a class="hide-sm" href="#/price-list">Перечень продукции</a><a class="hide-sm" href="#/about">О Нас</a><a class="hide-sm" href="#/contacts">Контакты</a>
+        <a class="hide-sm hot" href="#/promo">Акции</a><a class="hide-sm hot" href="#/news">Новости</a><a class="hide-sm" href="#/about">О Нас</a><a class="hide-sm" href="#/contacts">Контакты</a>
         <a class="phone" href="${telHref(PHONE)}">${icon('phone')}+998 78 888 70 00</a>
         <div class="lang" role="group" aria-label="Язык">${[['ru', 'RU'], ['uz', 'UZ'], ['en', 'EN']].map(([k, t]) => `<button type="button" data-lang="${k}" aria-pressed="${LANG === k}" lang="${k}">${t}</button>`).join('')}</div>
       </div></div>
@@ -680,7 +697,7 @@
   };
   const DESC = DESC_ALL[LANG];
 
-  const ORG = { '@type': 'Organization', '@id': SITE + '/#org', name: 'Sharq Darmon', alternateName: ['Шарк Дармон', 'Шарқ Дармон', 'ООО «Sharq Darmon»', 'Sharq Darmon MChJ'], url: SITE + '/', logo: SITE + '/assets/logo.png',
+  const ORG = { '@type': 'Organization', '@id': SITE + '/#org', name: 'Sharq Darmon', alternateName: ['Шарк Дармон', 'Шарқ Дармон', 'ООО «Sharq Darmon»', 'Sharq Darmon MChJ'], url: SITE + '/', logo: SITE + '/favicon-512.png',
     telephone: '+998788887000', email: 'sharq-darmon@mail.ru',
     address: { '@type': 'PostalAddress', streetAddress: 'ул. Хусейна Байкары, 27А', addressLocality: 'Ташкент', addressRegion: 'Бектемирский район', addressCountry: 'UZ' },
     contactPoint: [{ '@type': 'ContactPoint', telephone: '+998788887000', contactType: 'customer service', areaServed: 'UZ', availableLanguage: ['ru', 'uz', 'en'] },
